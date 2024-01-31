@@ -5,14 +5,15 @@ import styles from "./page.module.css";
 import { Tree } from "react-tree-graph";
 import "react-tree-graph/dist/style.css";
 import Person from "./components/person";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import InputINT from "./components/inputINT";
-import zmien_state from "./components/zmien_state";
 import sprawdzPokrewienstwo from "./components/sprawdzPokrewienstwo";
+import findPerson from "./components/findPerson";
+import dodaj_malzonka from "./components/dodajMalzonka";
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
-  const [prokrewienstwo, setPokrewienstwo] = useState("")
+  const [prokrewienstwo, setPokrewienstwo] = useState("");
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -59,43 +60,43 @@ export default function Home() {
     set_global_id(a + 1);
   }
 
-  function findPerson(id, arr) {
-    for (let i = 0; i < arr.length; i++) {
-      console.log(arr[i])
-      if (arr[i].id == id) {
-        return arr[i];
-      }
-    }
-    return null;
-  }
-
   function saveData() {
     const newData = [...data];
 
-    newData.push([])
-    for(let i=0; i<arr.length; i++){
-      newData[newData.length-1].push(new Person(arr[i].realName, arr[i].id, [], arr[i].plec, arr[i].malzonek, arr[i].father, arr[i].mother))      
+    newData.push([]);
+    for (let i = 0; i < arr.length; i++) {
+      newData[newData.length - 1].push(
+        new Person(
+          arr[i].realName,
+          arr[i].id,
+          [],
+          arr[i].plec,
+          arr[i].malzonek,
+          arr[i].father,
+          arr[i].mother
+        )
+      );
     }
 
-    for(let i=0; i<arr.length; i++){
-      for(let j=0; j<arr[i].children.length; j++){
-        console.log("HEREEE")
-        const person = findPerson(arr[i].children[j].id, newData[newData.length-1])
+    for (let i = 0; i < arr.length; i++) {
+      for (let j = 0; j < arr[i].children.length; j++) {
+        const person = findPerson(
+          arr[i].children[j].id,
+          newData[newData.length - 1]
+        );
 
-        if(person != undefined){
-          newData[newData.length-1][i].children.push(person)
-
+        if (person != undefined) {
+          newData[newData.length - 1][i].children.push(person);
         }
       }
     }
-    console.log(newData)
 
     setData([...newData]);
   }
 
   function loadData(idx) {
-    const newData = [...data[idx]]
-    setArr([...newData])
+    const newData = [...data[idx]];
+    setArr([...newData]);
   }
 
   function remove(idx) {
@@ -128,14 +129,6 @@ export default function Home() {
       </div>
     );
   }
-
-  function dodaj_malzonka(osoba) {
-    if (osoba.malzonek != null) {
-      return osoba.malzonek;
-    }
-    return null;
-  }
-
 
   return (
     <div>
@@ -190,7 +183,7 @@ export default function Home() {
           <button
             type="button"
             className="btn btn-primary"
-            onClick={() => sprawdzPokrewienstwo(int_OD, int_DO)}
+            onClick={() => setPokrewienstwo(sprawdzPokrewienstwo(int_OD, int_DO, arr))}
           >
             Sprawdz
           </button>
