@@ -16,34 +16,39 @@ function sprawdzPokrewienstwo(od_id, do_id, data) {
 
   q.push(pair);
 
-  let visited = [od_];
+  var visited = [];
 
   while (q.length != 0) {
-    let curr = q[0];
+    let curr = [0,0];
+    curr[0] = q[0][0];
+    curr[1] = q[0][1];
     q.shift();
 
-    visited.push(curr[0]);
+    console.log("AKTUALNIE: ", curr[0], " | state: ", curr[1])
+    console.log(visited)
 
+    if (curr[0].id == do_id) {
+      console.log("POKREWIENSTWO: ", curr[1])
+      return curr[1];
+    }
+
+    if(visited.includes(curr[0].id)){
+      continue
+    }
     if (findPerson(curr[0].id, data) == null) {
       continue;
     }
 
-    if (curr[0].id == do_.id) {
-      console.log("POKREWIENSTWO: ", curr[1]);
-      return curr[1];
-    }
 
+    visited.push(curr[0].id);
+
+
+ 
+    
+    console.log("DZIECI: ", curr[0].children)
     for (let i = 0; i < curr[0].children.length; i++) {
-      console.log("DZIECKO: ", curr[0].children[i]);
-      let found = -1;
-      for (let j = 0; j < visited.length; j++) {
-        if (visited[j] == curr[0].children[i]) {
-          found = 1;
-        }
-      }
-
-      if (found == -1) {
-        visited.push(curr[0]);
+      if (!visited.includes(curr[0].children[i].id) && curr[0].children[i] != null) {
+        console.log("DODAJE",curr[0].children[i])
         pair[0] = curr[0].children[i];
         pair[1] = zmien_state(curr[1], 1, pair[0].plec);
         q.push(pair);
@@ -55,27 +60,22 @@ function sprawdzPokrewienstwo(od_id, do_id, data) {
           q.push(pair2);
         }
       }
-    }
-
-    let found2 = -1;
-    let found = -1;
-
-    for (let j = 0; j < visited.length; j++) {
-      if (curr[0].father != null && visited[j] == curr[0].father) {
-        found = 1;
-      }
-      if (curr[0].mother != null && visited[j] == curr[0].mother) {
-        found2 = 1;
+      else{
+        console.log("TA OSOBA JEST JUZ: ", curr[0].children[i])
       }
     }
 
-    if (found == -1 && curr[0].father != null) {
+
+    if (curr[0].father != null && !visited.includes(curr[0].father.id)) {
+      console.log("DODAJE OJCA: ", curr[0].father)
       pair[0] = curr[0].father;
       pair[1] = zmien_state(curr[1], -1, pair[0].plec);
       q.push(pair);
     }
 
-    if (found2 == -1 && curr[0].mother != null) {
+    if (curr[0].mother != null && !visited.includes(curr[0].mother.id)) {
+      console.log("DODAJE")
+
       pair[0] = curr[0].mother;
       pair[1] = zmien_state(curr[1], -1, pair[0].plec);
       q.push(pair);
